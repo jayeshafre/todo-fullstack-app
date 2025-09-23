@@ -1,0 +1,51 @@
+{
+	"id": "todo-app-environment-001",
+	"name": "Todo App - Local Development",
+	"values": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "default",
+			"description": "Base URL for the Todo API backend server"
+		},
+		{
+			"key": "api_version",
+			"value": "v1",
+			"type": "default",
+			"description": "API version for future versioning support"
+		},
+		{
+			"key": "todo_id",
+			"value": "",
+			"type": "default",
+			"description": "ID of the todo item created during testing (auto-populated)"
+		},
+		{
+			"key": "todo_id_2",
+			"value": "",
+			"type": "default",
+			"description": "ID of the second todo item created during testing (auto-populated)"
+		},
+		{
+			"key": "request_timestamp",
+			"value": "",
+			"type": "default",
+			"description": "Timestamp of the current request (auto-populated)"
+		},
+		{
+			"key": "test_user_name",
+			"value": "Test User",
+			"type": "default",
+			"description": "Name used for testing purposes"
+		},
+		{
+			"key": "environment_name",
+			"value": "local",
+			"type": "default",
+			"description": "Current environment name"
+		}
+	],
+	"_postman_variable_scope": "environment",
+	"_postman_exported_at": "2024-09-23T00:00:00.000Z",
+	"_postman_exported_using": "Postman/10.0.0"
+}

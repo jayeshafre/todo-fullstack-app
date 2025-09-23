@@ -1,0 +1,732 @@
+{
+	"info": {
+		"_postman_id": "todo-app-collection-001",
+		"name": "Todo App API Collection",
+		"description": "Complete API testing collection for Todo Full-Stack Application with Spring Boot backend and PostgreSQL database.\n\nThis collection includes:\n- Health check and welcome endpoints\n- Full CRUD operations for todos\n- Search and filter functionality\n- Proper error handling tests\n\n**Setup Instructions:**\n1. Import this collection into Postman\n2. Import the environment file\n3. Make sure your Spring Boot backend is running on http://localhost:8080\n4. Run tests in sequence or use the collection runner",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Health & Welcome",
+			"item": [
+				{
+					"name": "Health Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has status UP\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"UP\");",
+									"});",
+									"",
+									"pm.test(\"Response has service name\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.service).to.eql(\"Todo Backend\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/health",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"health"
+							]
+						},
+						"description": "Check if the backend service is running and healthy"
+					},
+					"response": []
+				},
+				{
+					"name": "Welcome Message",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response has welcome message\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.include(\"Welcome to Todo App Backend!\");",
+									"});",
+									"",
+									"pm.test(\"Response has success status\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.status).to.eql(\"success\");",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/welcome",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"welcome"
+							]
+						},
+						"description": "Get welcome message from the backend API"
+					},
+					"response": []
+				}
+			],
+			"description": "Basic health check and welcome endpoints to verify API connectivity"
+		},
+		{
+			"name": "Todo CRUD Operations",
+			"item": [
+				{
+					"name": "Get All Todos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Response is an array\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 1000ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(1000);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/todos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos"
+							]
+						},
+						"description": "Retrieve all todos from the database, ordered by creation date (newest first)"
+					},
+					"response": []
+				},
+				{
+					"name": "Create New Todo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Todo was created with correct data\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.title).to.eql(\"Learn Spring Boot with PostgreSQL\");",
+									"    pm.expect(jsonData.completed).to.eql(false);",
+									"    pm.expect(jsonData.id).to.be.a('number');",
+									"});",
+									"",
+									"pm.test(\"Todo has timestamps\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.createdAt).to.exist;",
+									"    pm.expect(jsonData.updatedAt).to.exist;",
+									"});",
+									"",
+									"// Save the todo ID for use in other tests",
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"todo_id\", jsonData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Learn Spring Boot with PostgreSQL\",\n    \"description\": \"Complete the todo app backend tutorial with PostgreSQL database integration\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/todos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos"
+							]
+						},
+						"description": "Create a new todo item. The backend automatically sets completed=false and timestamps."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Second Todo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 201\", function () {",
+									"    pm.response.to.have.status(201);",
+									"});",
+									"",
+									"pm.test(\"Second todo created successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.title).to.eql(\"Build React Frontend\");",
+									"    pm.expect(jsonData.completed).to.eql(false);",
+									"});",
+									"",
+									"// Save the second todo ID",
+									"if (pm.response.code === 201) {",
+									"    var jsonData = pm.response.json();",
+									"    pm.environment.set(\"todo_id_2\", jsonData.id);",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Build React Frontend\",\n    \"description\": \"Create the user interface for todo app using React.js with modern hooks and styling\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/todos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos"
+							]
+						},
+						"description": "Create a second todo to have multiple items for testing list operations"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Todo by ID",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Todo retrieved successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.id).to.be.a('number');",
+									"    pm.expect(jsonData.title).to.exist;",
+									"    pm.expect(jsonData.description).to.exist;",
+									"    pm.expect(jsonData.completed).to.be.a('boolean');",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/todos/{{todo_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos",
+								"{{todo_id}}"
+							]
+						},
+						"description": "Retrieve a specific todo by its ID. Uses the todo_id saved from the create operation."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Todo (Mark as Complete)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Todo updated successfully\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.completed).to.eql(true);",
+									"    pm.expect(jsonData.description).to.include(\"COMPLETED\");",
+									"});",
+									"",
+									"pm.test(\"Updated timestamp changed\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.updatedAt).to.exist;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Learn Spring Boot with PostgreSQL\",\n    \"description\": \"Complete the todo app backend tutorial with PostgreSQL database integration - COMPLETED!\",\n    \"completed\": true\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/todos/{{todo_id}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos",
+								"{{todo_id}}"
+							]
+						},
+						"description": "Update an existing todo. This example marks it as completed and updates the description."
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Todo",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Response body is empty\", function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/todos/{{todo_id_2}}",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos",
+								"{{todo_id_2}}"
+							]
+						},
+						"description": "Delete a specific todo by ID. Returns 204 No Content on success."
+					},
+					"response": []
+				}
+			],
+			"description": "Complete CRUD (Create, Read, Update, Delete) operations for todo items"
+		},
+		{
+			"name": "Todo Filters & Search",
+			"item": [
+				{
+					"name": "Get Completed Todos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"All todos are completed\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.length > 0) {",
+									"        jsonData.forEach(function(todo) {",
+									"            pm.expect(todo.completed).to.eql(true);",
+									"        });",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/todos/completed",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos",
+								"completed"
+							]
+						},
+						"description": "Get only the todos that are marked as completed"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Pending Todos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"All todos are pending\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.length > 0) {",
+									"        jsonData.forEach(function(todo) {",
+									"            pm.expect(todo.completed).to.eql(false);",
+									"        });",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/todos/pending",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos",
+								"pending"
+							]
+						},
+						"description": "Get only the todos that are not yet completed (pending)"
+					},
+					"response": []
+				},
+				{
+					"name": "Search Todos by Keyword",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"Search results contain keyword\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.length > 0) {",
+									"        jsonData.forEach(function(todo) {",
+									"            pm.expect(todo.title.toLowerCase()).to.include(\"spring\");",
+									"        });",
+									"    }",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/todos/search?keyword=spring",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos",
+								"search"
+							],
+							"query": [
+								{
+									"key": "keyword",
+									"value": "spring",
+									"description": "Search for todos containing this keyword in the title"
+								}
+							]
+						},
+						"description": "Search todos by keyword in title (case-insensitive). Try changing the keyword parameter."
+					},
+					"response": []
+				}
+			],
+			"description": "Filter and search operations for finding specific todos"
+		},
+		{
+			"name": "Error Handling Tests",
+			"item": [
+				{
+					"name": "Get Non-existent Todo (404 Test)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 404\", function () {",
+									"    pm.response.to.have.status(404);",
+									"});",
+									"",
+									"pm.test(\"Response time is less than 500ms\", function () {",
+									"    pm.expect(pm.response.responseTime).to.be.below(500);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/todos/99999",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos",
+								"99999"
+							]
+						},
+						"description": "Test error handling by requesting a todo that doesn't exist"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Todo with Invalid Data",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 500 (Internal Server Error) or 400 (Bad Request)\", function () {",
+									"    pm.expect([400, 500]).to.include(pm.response.code);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": null,\n    \"description\": \"This should fail because title is null\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/todos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos"
+							]
+						},
+						"description": "Test error handling by sending invalid data (null title)"
+					},
+					"response": []
+				}
+			],
+			"description": "Tests to verify proper error handling and HTTP status codes"
+		},
+		{
+			"name": "Cleanup Operations",
+			"item": [
+				{
+					"name": "Delete All Todos",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 204\", function () {",
+									"    pm.response.to.have.status(204);",
+									"});",
+									"",
+									"pm.test(\"Response body is empty\", function () {",
+									"    pm.expect(pm.response.text()).to.be.empty;",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/todos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos"
+							]
+						},
+						"description": "Delete all todos from the database. Use with caution!"
+					},
+					"response": []
+				},
+				{
+					"name": "Verify All Todos Deleted",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {",
+									"    pm.response.to.have.status(200);",
+									"});",
+									"",
+									"pm.test(\"No todos remain\", function () {",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData).to.be.an('array');",
+									"    pm.expect(jsonData).to.have.lengthOf(0);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/todos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"todos"
+							]
+						},
+						"description": "Verify that all todos have been deleted from the database"
+					},
+					"response": []
+				}
+			],
+			"description": "Operations to clean up test data"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// This script runs before every request",
+					"console.log('Making request to: ' + pm.request.url);",
+					"",
+					"// Set timestamp for logging",
+					"pm.environment.set('request_timestamp', new Date().toISOString());"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// This script runs after every request",
+					"console.log('Response status: ' + pm.response.code);",
+					"console.log('Response time: ' + pm.response.responseTime + 'ms');",
+					"",
+					"// Global test for response time",
+					"pm.test('Response time is reasonable', function () {",
+					"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+					"});"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "collection_version",
+			"value": "1.0.0",
+			"type": "string"
+		}
+	]
+}
