@@ -8,8 +8,10 @@ This project is currently under active development. Features and documentation w
 
 # Screenshots
 
+<img width="1469" height="991" alt="Screenshot 2025-09-28 162546" src="https://github.com/user-attachments/assets/0053c834-ba3f-410d-94e3-3bba618bf08a" />
+
 <img width="1474" height="997" alt="Screenshot 2025-09-28 162507" src="https://github.com/user-attachments/assets/1550599b-40c3-4f37-94fa-2aba38422476" />
-<img width="1474" height="997" alt="Screenshot 2025-09-28 162507" src="https://github.com/user-attachments/assets/ccae4427-7966-4133-b44f-d2eb5b598687" />
+
 
 
 
